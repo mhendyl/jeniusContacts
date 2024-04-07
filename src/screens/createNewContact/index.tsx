@@ -39,9 +39,10 @@ const CreateNewContact = ({navigation}: {navigation: any}) => {
     await dispatch(createContactNewThunk(body));
     navigation.goBack();
   };
+
   const selectImage = () => {
     ImagePicker.launchImageLibrary(
-      {mediaType: 'photo', includeBase64: true},
+      {mediaType: 'photo', includeBase64: true, maxHeight: 100, maxWidth: 100},
       setResponse,
     );
   };

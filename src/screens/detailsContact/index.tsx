@@ -1,25 +1,35 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import styles from './style';
 import {TextComponent} from '../../components/text';
 import {ActivityIndicator, Alert, Image, View} from 'react-native';
 import {ButtonComponent} from '../../components/button';
-import {getContactDetailsThunk} from '../../rtk/contact';
+// import {getContactDetailsThunk} from '../../rtk/contact';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../rtk/rootReducer';
 import {getFirstLetter, isImageHttpOrBase64} from '../../utils';
+import {
+  deleteContactDetailsThunk,
+  getContactDetailsThunk,
+  setEnabledCreateNewContact,
+} from '../../rtk/contact';
 
 const DetailsContact = ({route, navigation}: {route: any; navigation: any}) => {
   const dispatch = useDispatch();
   const {id} = route.params;
-  const {contactDetails, isLoading} = useSelector(
+  const {contactDetails, isLoading, editContact} = useSelector(
     (state: RootState) => state.contactReducer,
   );
+
   useEffect(() => {
-    dispatch(getContactDetailsThunk(id));
-  }, [dispatch, id]);
+    if (editContact) {
+      dispatch(getContactDetailsThunk(id));
+    }
+  }, [dispatch, editContact, id]);
 
   const deleteContact = () => {
-    Alert.alert('Error', 'BE API Error 400');
+    dispatch(deleteContactDetailsThunk(id));
+    dispatch(setEnabledCreateNewContact());
+    navigation.goBack();
   };
 
   const header = () => {
@@ -47,7 +57,7 @@ const DetailsContact = ({route, navigation}: {route: any; navigation: any}) => {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading && !contactDetails ? (
         <View style={styles.wrapperLoader}>
           <ActivityIndicator size="large" />
         </View>

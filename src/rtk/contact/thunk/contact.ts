@@ -3,6 +3,9 @@ import {getAllContact} from '../api/getContact';
 import {getcontactDetails} from '../api/getContactDetails';
 import {createNewContactApi} from '../api/createContact';
 import {ContactInterface} from '../models';
+import {deleteContactDetails} from '../api/deleteContact';
+import {Alert} from 'react-native';
+import {editContactApi} from '../api/editContact';
 
 export const getAllContactThunk = createAsyncThunk(
   'contact/getContact',
@@ -10,7 +13,8 @@ export const getAllContactThunk = createAsyncThunk(
     try {
       return await getAllContact();
     } catch (error) {
-      throw error;
+      console.error(error);
+      Alert.alert('Something went wrong', error);
     }
   },
 );
@@ -18,10 +22,12 @@ export const getAllContactThunk = createAsyncThunk(
 export const getContactDetailsThunk = createAsyncThunk(
   'contact/getContactDetails',
   async (id: string) => {
+    console.log('>>> hit', id);
     try {
       return await getcontactDetails(id);
     } catch (error) {
-      throw error;
+      console.error(error);
+      Alert.alert('Something went wrong', error);
     }
   },
 );
@@ -30,9 +36,10 @@ export const deleteContactDetailsThunk = createAsyncThunk(
   'contact/deleteContactDetails',
   async (id: string) => {
     try {
-      return await getcontactDetails(id);
+      return await deleteContactDetails(id);
     } catch (error) {
-      throw error;
+      console.error(error);
+      Alert.alert('Something went wrong', error);
     }
   },
 );
@@ -43,7 +50,20 @@ export const createContactNewThunk = createAsyncThunk(
     try {
       return await createNewContactApi(params);
     } catch (error) {
-      throw error;
+      console.error(error);
+      Alert.alert('Something went wrong', error);
+    }
+  },
+);
+
+export const editContactNewThunk = createAsyncThunk(
+  'contact/editContactDetails',
+  async ({params, id}: {params: ContactInterface; id: string}) => {
+    try {
+      return await editContactApi({params, id});
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Something went wrong', error);
     }
   },
 );

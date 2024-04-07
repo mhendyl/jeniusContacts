@@ -8,6 +8,7 @@ export const getcontactDetails = async (id: string) => {
         Accept: 'application/json',
       },
     });
+    console.log('>>> response', response);
     return response.data;
   } catch (error) {
     throw new Error('Error get location');

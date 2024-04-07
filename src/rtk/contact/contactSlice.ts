@@ -3,6 +3,7 @@ import {contactInitialState} from './models/initialState';
 import {
   createContactNewThunk,
   deleteContactDetailsThunk,
+  editContactNewThunk,
   getAllContactThunk,
   getContactDetailsThunk,
 } from './thunk';
@@ -13,6 +14,9 @@ export const contactSlice = createSlice({
   reducers: {
     setDisabledCreateNewContact: state => {
       state.createNewContact = false;
+    },
+    setEnabledCreateNewContact: state => {
+      state.createNewContact = true;
     },
   },
   extraReducers: builder => {
@@ -59,9 +63,16 @@ export const contactSlice = createSlice({
       .addCase(createContactNewThunk.rejected, state => {
         state.createNewContact = false;
         state.error = state.error;
+      })
+      .addCase(editContactNewThunk.fulfilled, state => {
+        state.editContact = true;
+      })
+      .addCase(editContactNewThunk.rejected, state => {
+        state.editContact = false;
+        state.error = state.error;
       });
   },
 });
 
-export const {setDisabledCreateNewContact} = contactSlice.actions;
+export const {setDisabledCreateNewContact, setEnabledCreateNewContact} = contactSlice.actions;
 export const contactReducer = contactSlice.reducer;

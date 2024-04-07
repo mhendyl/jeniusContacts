@@ -3,7 +3,11 @@ import {FlatList, TouchableOpacity, View} from 'react-native';
 import styles from './style';
 import {TextComponent} from '../../components/text';
 import {useDispatch, useSelector} from 'react-redux';
-import {getAllContactThunk, setDisabledCreateNewContact} from '../../rtk/contact';
+import {
+  getAllContactThunk,
+  getContactDetailsThunk,
+  setDisabledCreateNewContact,
+} from '../../rtk/contact';
 import {TextInputComponent} from '../../components/textInput';
 import {RootState} from '../../rtk/rootReducer';
 import {ContactInterface} from '../../rtk/contact/models/initialState';
@@ -17,7 +21,9 @@ export type RenderContactTypes = {
 
 const HomeScreen = ({navigation}: {navigation: any}) => {
   const dispatch = useDispatch();
-  const {contact, createNewContact} = useSelector((state: RootState) => state.contactReducer);
+  const {contact, createNewContact, contactDetails} = useSelector(
+    (state: RootState) => state.contactReducer,
+  );
   const [search, setSearch] = useState<string>('');
   const [dataContact, setDataContact] = useState<any>(contact);
   useEffect(() => {
@@ -44,7 +50,8 @@ const HomeScreen = ({navigation}: {navigation: any}) => {
     }
   }, [contact, search]);
 
-  const handleOnPressDetailContact = (id: string) => {
+  const handleOnPressDetailContact = async (id: string) => {
+    await dispatch(getContactDetailsThunk(id));
     navigation.navigate('Details', {id});
   };
 

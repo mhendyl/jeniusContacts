@@ -93,6 +93,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
   },
+  buttonSelectPicture: {
+    borderWidth: 0,
+  },
+  buttonTextSelectPicture: {
+    color: '#5c94ed',
+    textAlign: 'center',
+    marginBottom: 80,
+  },
 });
 
 export default styles;

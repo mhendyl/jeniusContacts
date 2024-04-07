@@ -21,6 +21,7 @@ export interface ContactInitialInterface {
   contactDetails: ContactDetailsInterface | any;
   deleteContactDetails: boolean;
   createNewContact: boolean;
+  editContact: boolean;
 }
 
 export const contactInitialState: ContactInitialInterface = {
@@ -29,5 +30,6 @@ export const contactInitialState: ContactInitialInterface = {
   contactDetails: null,
   deleteContactDetails: true,
   createNewContact: false,
+  editContact: false,
   error: '',
 };

@@ -5,17 +5,22 @@ import {Image, View} from 'react-native';
 import {ButtonComponent} from '../../components/button';
 import {TextInputComponent} from '../../components/textInput';
 import {RootState} from '../../rtk/rootReducer';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {isImageHttpOrBase64, getFirstLetter} from '../../utils';
+import * as ImagePicker from 'react-native-image-picker';
+import {editContactNewThunk} from '../../rtk/contact';
 
 const EditScreen = ({route, navigation}: {route: any; navigation: any}) => {
+  const dispatch = useDispatch();
   const {id} = route.params;
   const {contactDetails} = useSelector(
     (state: RootState) => state.contactReducer,
   );
   const [firstName, setFirstName] = useState(contactDetails.firstName);
   const [lastName, setLastName] = useState(contactDetails.lastName);
-  const [age, setAge] = useState(contactDetails.age);
+  const [ageState, setAgeState] = useState(contactDetails.age.toString());
+  const [response, setResponse] = React.useState<any>('');
+
   const header = () => {
     return (
       <View style={styles.wrapperHeader}>
@@ -31,19 +36,35 @@ const EditScreen = ({route, navigation}: {route: any; navigation: any}) => {
     );
   };
 
+  const selectImage = () => {
+    ImagePicker.launchImageLibrary(
+      {mediaType: 'photo', includeBase64: true, maxHeight: 100, maxWidth: 100},
+      setResponse,
+    );
+  };
+
   const handleSave = () => {
-    console.log('>>> save');
+    const value = {
+      firstName: firstName,
+      lastName: lastName,
+      // eslint-disable-next-line radix
+      age: parseInt(ageState),
+      photo: `data:image/png;base64,${response?.assets[0].base64}`,
+    };
+    dispatch(editContactNewThunk({params: value, id: id}));
   };
 
   return (
     <View style={styles.container}>
       {header()}
       <View style={styles.bodyContainer}>
-        {isImageHttpOrBase64(contactDetails?.photo) ? (
+        {isImageHttpOrBase64(contactDetails?.photo) || response ? (
           <Image
             style={styles.imageProfile}
             source={{
-              uri: contactDetails?.photo,
+              uri: response
+                ? `data:image/png;base64,${response?.assets[0].base64}`
+                : contactDetails?.photo,
             }}
           />
         ) : (
@@ -58,6 +79,12 @@ const EditScreen = ({route, navigation}: {route: any; navigation: any}) => {
             />
           </View>
         )}
+        <ButtonComponent
+          label="Select Photos"
+          onPress={selectImage}
+          styleCustom={styles.buttonSelectPicture}
+          styleTextCustom={styles.buttonTextSelectPicture}
+        />
         <TextComponent
           label={`${contactDetails.firstName} ${contactDetails.lastName}`}
           testId="fullName"
@@ -78,18 +105,18 @@ const EditScreen = ({route, navigation}: {route: any; navigation: any}) => {
             placeholder="Last Name"
             onChange={setLastName}
             value={lastName}
-            testId="firstName"
-            label="firstName"
+            testId="lastName"
+            label="lastName"
             placeholderTextColor="#828282"
           />
           <TextInputComponent
             styleCustom={styles.inputTextSecond}
             placeholder="Age"
-            onChange={setAge}
-            value={age}
+            onChange={setAgeState}
+            value={ageState}
             placeholderTextColor="#828282"
-            testId="firstName"
-            label="firstName"
+            testId="age"
+            label="age"
           />
         </View>
         <ButtonComponent
